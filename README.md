@@ -8,7 +8,7 @@ You must create a `config.json` file within the same directory as `tixcli.py` in
 ## Help Text
 ```
 General Operations
-   --help (-h)                                | This help text.
+   --help (-h)                                  | This help text.
 
    --list (-l) [all | <filter>:<filter>..]      | Lists all transfers if "all" is specified, otherwise filters using a whitelist.
 
