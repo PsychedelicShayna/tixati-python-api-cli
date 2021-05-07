@@ -6,4 +6,5 @@
 
 !source/
 
+*.pyc
 *.json
