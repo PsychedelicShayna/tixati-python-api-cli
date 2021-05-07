@@ -1,5 +1,5 @@
 # Tixati Python API and Command Line Interface
-This project consists of two parts: `tixati_api.py` which is a general purpose API class for interfacing with Tixati's webserver through Python, and `tixapi.py` which is a command line interface that implements `tixati_api.py` to be able to manage torrents/transfers remotely from the command line. You will need to have Tixati's webserver up and running to be able to use this.
+This project consists of two parts: `tixati_api.py` which is a general purpose API class for interfacing with Tixati's webserver through Python, and `tixcli.py` which is a command line interface that implements `tixati_api.py` to be able to manage torrents/transfers remotely from the command line. You will need to have Tixati's webserver up and running to be able to use this.
 
 Caution: The API uses RegEx to scrape the web interface for a list of transfers, however I'm unsure if the built-in RegEx will work for all versions of Tixati, or Tixati instances with a different theme than the one I'm using, as that may affect the HTML that the RegEx is built to scrape. You you may have to modify the RegEx in order for it to be compatible.
 
