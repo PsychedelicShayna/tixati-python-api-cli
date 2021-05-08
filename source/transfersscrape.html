@@ -1,0 +1,388 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<meta content="text/html; charset=utf-8" http-equiv="content-type">
+	<title>Transfers - Tixati Web Interface</title>
+	<link rel="stylesheet" type="text/css" href="main.css">
+</head>
+
+<script>
+<!--
+var inputs = [];
+function udctrls()
+{
+	var sel = false;
+	for(var i = 0; i < inputs.length; i++) {
+		if(inputs[i].checked) {
+			sel=true;
+			break;
+		}
+	}
+	var btns = document.getElementsByClassName("selctrl");
+	for(var i=btns.length-1; i>=0; i--) {
+		btns[i].disabled = !(sel);
+	}
+}
+
+function invertOrder(){
+	inputs = document.getElementsByClassName("selection");
+	udctrls();
+  var table = document.getElementById("tranferslisttable"),
+    newTbody = document.createElement('tbody'),
+    oldTbody = table.tBodies[0],
+    rows = oldTbody.rows,
+    i = rows.length - 1;
+
+  while (i >= 0) {
+      newTbody.appendChild(rows[i]);
+      i -= 1;
+  }
+  oldTbody.parentNode.replaceChild(newTbody, oldTbody);
+
+	// onchange listener for link input
+	/*
+	document.getElementById("addlinktext").addEventListener("change", function() {
+		document.getElementById("addlinksubmit").disabled = (document.getElementById("addlinktext").value === "");
+	});
+	*/
+}
+
+function toggleHiddenControls() {
+	var controls = document.getElementById("hidden-controls");
+	controls.style.display = controls.style.display === 'none' ? '' : 'none';
+}
+
+document.onkeypress = function(e) {
+  var textInput = document.getElementById('addlinktext');
+  if(e.which == 13 && textInput.value !== "") {
+    document.getElementById("addlinksubmit").click();
+  } else if (e.which == 122 && e.ctrlKey) {
+    textInput.value = "";
+  }
+};
+
+
+document.addEventListener('paste', function (evt) {
+	document.getElementById('addlinktext').value = evt.clipboardData.getData('text/plain');
+});
+
+//-->
+</script>
+
+<body onload="invertOrder()">
+<a name="top">
+<table class="topnav">
+	<tr>
+		<td><a href="/home">Home</a></td>
+		<td class="topnavselitem"><a href="/transfers">Transfers</a></td>
+		<td><a href="/bandwidth">Bandwidth</a></td>
+		<td><a href="/dht">DHT</a></td>
+		<td><a href="/settings">Settings</a></td>
+		<td>D: <b>$bpsin$B/s</b> - U: <b>$bpsout$B/s</b></td>
+	</tr>
+</table>
+
+<br/>
+
+<form method="post" action="/transfers/action" enctype="multipart/form-data" id="mainform">
+
+<table class="xfersctrls">
+	<tr>
+		<td><input type="submit" name="start" value="Start" class="selctrl"/></td>
+		<td><input type="submit" name="stop" value="Stop" class="selctrl"/></td>
+		<td><input type="submit" name="delete" value="Delete Files" class="selctrl"/></td>
+		<td style="text-align:right;">
+			<input type="text" name="addlinktext" size=10 style="width:70%" id="addlinktext" placehoder="magner URL"/>
+			<input type="submit" name="addlink" Value="Add" id="addlinksubmit"/>&nbsp;
+			<input type="checkbox" name="noautostart" value="1" title="Stop before file allocation" style="display:none;"/>
+		</td>
+		<td><a href="#" class="button" onclick="toggleHiddenControls()">Controls</a></td>
+	</tr>
+</table>
+
+<!--if filterenabled-->
+<table class="xfersctrls">
+	<tr>
+		<td style="white-space:nowrap;">Filter&nbsp;<input type="checkbox" name="xferfilter_on" value="1" $chk_xfers_filter$/></td>
+		<td><input type="text" name="xferfilter_text" size=40 value="$xferfilter_text$"/></td>
+		<td><input type="submit" name="xferfilter_clear" value="Clear"/></td>
+		<td>
+			<select name="xferfilter_mode">
+				<!--select xferfilter_mode-->
+			</select>
+		</td>
+		<td><input type="submit" name="xferfilter_apply" value="Apply"/></td>
+	</tr>
+</table>
+<!--endif-->
+
+<div id="hidden-controls" style="display:none;">
+	<table class="xfersctrls">
+		<tr>
+			<td><input type="submit" name="addtransfer" Value="Advanced Add"/></td>
+			<td><input type="submit" name="searchdht" value="Search DHT" class="selctrl"/></td>
+			<td><input type="submit" name="checkfiles" value="Check Files" class="selctrl"/></td>
+			<td><input type="submit" name="remove" value="Remove" class="selctrl"/></td>
+		</tr>
+	</table>
+
+	<table class="xfersctrls">
+		<tr>
+			<td>Bandwidth Priority Group&nbsp;
+				<select name="priogrp" class="selctrl">
+					<option value="8">Ultra High</option>
+					<option value="7">Very High</option>
+					<option value="6">High</option>
+					<option value="5">Above Normal</option>
+					<option value="4" selected>Normal</option>
+					<option value="3">Below Normal</option>
+					<option value="2">Low</option>
+					<option value="1">Very Low</option>
+					<option value="0">Ultra Low</option>
+				</select>
+			</td>
+			<td>Peer Allowance&nbsp;
+				<select name="share" class="selctrl">
+					<option value="1000">x10</option>
+					<option value="500">x5</option>
+					<option value="400">x4</option>
+					<option value="300">x3</option>
+					<option value="200">x2</option>
+					<option value="150">x1.5</option>
+					<option value="100" selected>Normal</option>
+					<option value="75">75%</option>
+					<option value="50">50%</option>
+					<option value="20">20%</option>
+					<option value="10">10%</option>
+					<option value="5">5%</option>
+					<option value="2">2%</option>
+				</select>
+			</td>
+			<td><input type="submit" name="update_prio" Value="Apply" class="selctrl"/></td>
+		</tr>
+	</table>
+
+	<table class="xfersctrls">
+		<tr>
+			<td>Incoming Bandwidth Limit&nbsp;
+				<select name="inlimit" class="selctrl">
+					<option value="0" selected>No Limit</option>
+					<option value="100000">100 KB/s</option>
+					<option value="75000">75 KB/s</option>
+					<option value="50000">50 KB/s</option>
+					<option value="40000">40 KB/s</option>
+					<option value="30000">30 KB/s</option>
+					<option value="25000">25 KB/s</option>
+					<option value="20000">20 KB/s</option>
+					<option value="15000">15 KB/s</option>
+					<option value="10000">10 KB/s</option>
+					<option value="7500">7.5 KB/s</option>
+					<option value="5000">5 KB/s</option>
+					<option value="4000">4 KB/s</option>
+					<option value="3000">3 KB/s</option>
+					<option value="2000">2 KB/s</option>
+					<option value="1000">1 KB/s</option>
+				</select>
+			</td>
+			<td>Priority Group&nbsp;
+				<select name="inpriogrp" class="selctrl">
+					<option value="8">Ultra High</option>
+					<option value="7">Very High</option>
+					<option value="6">High</option>
+					<option value="5">Above Normal</option>
+					<option value="4" selected>Normal</option>
+					<option value="3">Below Normal</option>
+					<option value="2">Low</option>
+					<option value="1">Very Low</option>
+					<option value="0">Ultra Low</option>
+				</select>
+			</td>
+			<td>Peer Allowance&nbsp;
+				<select name="inshare" class="selctrl">
+					<option value="1000">x10</option>
+					<option value="500">x5</option>
+					<option value="400">x4</option>
+					<option value="300">x3</option>
+					<option value="200">x2</option>
+					<option value="150">x1.5</option>
+					<option value="100" selected>Normal</option>
+					<option value="75">75%</option>
+					<option value="50">50%</option>
+					<option value="20">20%</option>
+					<option value="10">10%</option>
+					<option value="5">5%</option>
+					<option value="2">2%</option>
+				</select>
+			</td>
+			<td><input type="submit" name="update_inprio" Value="Apply" class="selctrl"/></td>
+		</tr>
+		<tr>
+			<td>Outgoing Bandwidth Limit&nbsp;
+				<select name="outlimit" class="selctrl">
+					<option value="0" selected>No Limit</option>
+					<option value="100000">100 KB/s</option>
+					<option value="75000">75 KB/s</option>
+					<option value="50000">50 KB/s</option>
+					<option value="40000">40 KB/s</option>
+					<option value="30000">30 KB/s</option>
+					<option value="25000">25 KB/s</option>
+					<option value="20000">20 KB/s</option>
+					<option value="15000">15 KB/s</option>
+					<option value="10000">10 KB/s</option>
+					<option value="7500">7.5 KB/s</option>
+					<option value="5000">5 KB/s</option>
+					<option value="4000">4 KB/s</option>
+					<option value="3000">3 KB/s</option>
+					<option value="2000">2 KB/s</option>
+					<option value="1000">1 KB/s</option>
+				</select>
+			</td>
+			<td>Priority Group&nbsp;
+				<select name="outpriogrp" class="selctrl">
+					<option value="8">Ultra High</option>
+					<option value="7">Very High</option>
+					<option value="6">High</option>
+					<option value="5">Above Normal</option>
+					<option value="4" selected>Normal</option>
+					<option value="3">Below Normal</option>
+					<option value="2">Low</option>
+					<option value="1">Very Low</option>
+					<option value="0">Ultra Low</option>
+				</select>
+			</td>
+			<td>Peer Allowance&nbsp;
+				<select name="outshare" class="selctrl">
+					<option value="1000">x10</option>
+					<option value="500">x5</option>
+					<option value="400">x4</option>
+					<option value="300">x3</option>
+					<option value="200">x2</option>
+					<option value="150">x1.5</option>
+					<option value="100" selected>Normal</option>
+					<option value="75">75%</option>
+					<option value="50">50%</option>
+					<option value="20">20%</option>
+					<option value="10">10%</option>
+					<option value="5">5%</option>
+					<option value="2">2%</option>
+				</select>
+			</td>
+			<td><input type="submit" name="update_outprio" Value="Apply" class="selctrl"/></td>
+		</tr>
+	</table>
+
+	<table class="xfersctrls">
+		<tr>
+			<td>Upload Ratio Limit&nbsp;
+				<select name="ratiolimit" class="selctrl">
+					<option value="def" selected>Default</option>
+					<option value="0">None</option>
+					<option value="100">1.00</option>
+					<option value="110">1.10</option>
+					<option value="120">1.20</option>
+					<option value="130">1.30</option>
+					<option value="140">1.40</option>
+					<option value="150">1.50</option>
+					<option value="160">1.60</option>
+					<option value="170">1.70</option>
+					<option value="180">1.80</option>
+					<option value="190">1.90</option>
+					<option value="200">2.00</option>
+					<option value="220">2.20</option>
+					<option value="240">2.40</option>
+					<option value="260">2.60</option>
+					<option value="280">2.80</option>
+					<option value="300">3.00</option>
+					<option value="350">3.50</option>
+					<option value="400">4.00</option>
+					<option value="450">4.50</option>
+					<option value="500">5.00</option>
+					<option value="600">6.00</option>
+					<option value="700">7.00</option>
+					<option value="800">8.00</option>
+				<option value=""></option>
+				</select>
+			</td>
+			<td>Remote Seed Limit&nbsp;
+				<select name="seedlimit" class="selctrl">
+					<option value="def" selected>Default</option>
+					<option value="0">None</option>
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+					<option value="4">4</option>
+					<option value="5">5</option>
+					<option value="6">6</option>
+					<option value="7">7</option>
+					<option value="8">8</option>
+					<option value="9">9</option>
+					<option value="10">10</option>
+					<option value="15">15</option>
+					<option value="20">20</option>
+					<option value="25">25</option>
+					<option value="30">30</option>
+					<option value="35">35</option>
+					<option value="40">40</option>
+					<option value="50">50</option>
+				</select>
+			</td>
+			<td><input type="submit" name="update_ullimits" Value="Apply" class="selctrl"/></td>
+		</tr>
+	</table>
+
+	<table class="xfersctrls">
+		<tr>
+			<td>Constant Seeding&nbsp;
+				<select name="constseeding" class="selctrl">
+					<option value="0" selected>Off</option>
+					<option value="1">On</option>
+				</select>
+				&nbsp;
+				<input type="submit" name="update_constseeding" Value="Apply" class="selctrl"/>
+			</td>
+			<td>Super Seeding&nbsp;
+				<select name="superseeding" class="selctrl">
+					<option value="0" selected>Off</option>
+					<option value="1">On</option>
+				</select>
+				&nbsp;
+				<input type="submit" name="update_superseeding" Value="Apply" class="selctrl"/>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<table class="xferstable" id="tranferslisttable">
+
+<!--list_start transfers-->
+	<tr class="$statusclass_alt$">
+		<td><input class="selection" type="checkbox" name="$guid$" value="1" onclick="udctrls()"/></td>
+		<td><a href="/transfers/$guid$/details">$name$</a></td>
+		<td>$bytes$</td>
+		<td>$progress$</td>
+		<td>$status$</td>
+		<td>$bps_in$</td>
+		<td>$bps_out$</td>
+		<td>$priority$</td>
+		<td>$timeleft$</td>
+	</tr>
+<!--list_end-->
+	<tr>
+		<th>&nbsp;</th>
+		<th>Name</th>
+		<th>Bytes</th>
+		<th>&#37;</th>
+		<th>Status</th>
+		<th>B/s In</th>
+		<th>B/s Out</th>
+		<th>Priority</th>
+		<th>Time Left</th>
+	</tr>
+</table>
+<p><a href="#top" class="button">Top</a></p>
+<a name="bottom">
+	
+</form>
+
+</body>
+</html>

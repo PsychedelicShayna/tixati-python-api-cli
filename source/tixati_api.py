@@ -17,7 +17,7 @@ class TixatiServer:
             self.TimeLeft = tuple_entry[9]
 
     def FetchTransfers(self) -> list:
-        constructed_url:str = "http://{address}:{port}/transfers".format(address=self.Address, port=self.Port)
+        constructed_url:str = "http://{address}:{port}/transfersscrape".format(address=self.Address, port=self.Port)
         response = requests.get(constructed_url, auth=requests.auth.HTTPDigestAuth(self.Username, self.Password))
         regex_results = self.TRANSFERS_PAGE_HTML_SCRAPER.findall(response.content.decode())
 
