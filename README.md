@@ -6,7 +6,48 @@ I have no better way of fetching the transfer list than using RegEx to scrape th
 
 You must create a `config.json` file within the same directory as `tixcli.py` in order not to be prompted for a server/port/username/password every time you run the command. See the notes section of the help text for more information as to the format.
 
-## Help Text
+### API Example & Currently Available Functions
+
+```python
+from tixati_api import TixatiServer
+
+# Alternatively: server = TixatiServer(config = "./config.json")
+server = TixatiServer(config = {
+   "address": "127.0.0.1",
+   "port": 8890,
+   "username": "username",
+   "password": "password"
+})
+
+server.AddTransfer("a_magnet_link_here") 
+
+# Gets every transfer on the server in the form of a list of TixatiServer.Transfer class instances.
+all_transfers = server.FetchTransfers()
+first_transfer = all_transfers[0]
+
+server.RemoveTransfer(first_transfer.Id)
+server.DeleteTransfer(first_transfer.Id)
+server.StartTransfer(first_transfer.Id)
+server.StopTransfer(first_transfer.Id)
+```
+```python
+# Definition of TixatiServer.Transfer and all available properties.
+class Transfer:
+   def __init__(self, tuple_entry):
+      self.StatusClass     = tuple_entry[0]
+      self.Id              = tuple_entry[1]
+      self.Title           = tuple_entry[2]
+      self.SizeLeft        = tuple_entry[3]
+      self.Percent         = tuple_entry[4]
+      self.Status          = tuple_entry[5]
+      self.BytesIn         = tuple_entry[6]
+      self.BytesOut        = tuple_entry[7]
+      self.Priority        = tuple_entry[8]
+      self.TimeLeft        = tuple_entry[9]
+```
+
+
+### CLI Help Text
 ```
 General Operations
    --help (-h)                                  | This help text.
@@ -65,7 +106,7 @@ Notes
     Do not include http:// in the address.
 ```
 
-## Example Output
+## CLI Example Output
 _The output is color coded depending on the transfer state, but is obviously not visible through GitHub._
 
 `tixcli --list downloading:name=Nagatoro`
