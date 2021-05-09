@@ -138,6 +138,7 @@ Transfer Operations
     --stop  (-sp) <id;id;id..>                | Stops one or more transfers with the given IDs.
     --delete (-d) <id;id;id..>                | Removes and deletes the files of one or more transfers with the given IDs.
     --remove (-r) <id;id;id..>                | Removes one or more transfers with the given IDs.
+    --check  (-c) <id;id;id..>                | Checks the presence of the transfer's files, re-initiates the transfer if missing.
 
 Example Usage
     tixcli -l seeding:name=Toradora
@@ -240,14 +241,20 @@ if __name__ == "__main__":
                     # Next argument should be transfer ID.
                     operations.append(("stop", next_argument))
 
+                elif argument in ["--check", "-c"]:
+                    # Next argument should be transfer ID.
+                    operations.append(("check", next_argument))
+
         for operation in operations:
             operation_func_map:dict = {
+                "list":   lambda list_filter: RenderTransferList(server, list_filter),
+
                 "add":    server.AddTransfer,
                 "remove": server.RemoveTransfer,
                 "delete": server.DeleteTransfer,
                 "stop":   server.StopTransfer,
                 "start":  server.StartTransfer,
-                "list":   lambda list_filter: RenderTransferList(server, list_filter)
+                "check":  server.CheckFiles
             }
 
             if operation[0] in operation_func_map:

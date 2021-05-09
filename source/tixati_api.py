@@ -58,6 +58,10 @@ class TixatiServer:
         constructed_url:str = "http://{address}:{port}/transfers/{transfer_id}/details/action".format(address=self.Address, port=self.Port, transfer_id=transfer_id)
         return requests.post(constructed_url, auth=requests.auth.HTTPDigestAuth(self.Username, self.Password), data={"stop": "Stop"})
 
+    def CheckFiles(self, transfer_id:str) -> requests.Response:
+        constructed_url:str = "http://{address}:{port}/transfers/{transfer_id}/details/action".format(address=self.Address, port=self.Port, transfer_id=transfer_id)
+        return requests.post(constructed_url, auth=requests.auth.HTTPDigestAuth(self.Username, self.Password), data={"checkfiles": "Check Files"})
+
     def __init__(self, config):
         # Config points to a config.json file, and must be parsed into a dict before moving on.
         if isinstance(config, str) and config.endswith('.json') and os.path.isfile(config):
