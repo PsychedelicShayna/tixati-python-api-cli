@@ -1,4 +1,6 @@
-import requests, json, os, re
+import urllib3, requests, json, os, re
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class TixatiServer:
     TRANSFERS_PAGE_HTML_SCRAPER = re.compile("[\S\s]*?<tr class=\"(downloading|complete|seeding|offline)_(?:odd|even)\">[\S\s]*?<td><a href=\"\/transfers\/([a-z0-9]+)\/details\">([\S\s]*?)<\/a><\/td>[\S\s]*?<td>([\S\s]*?)<\/td>[\S\s]*?<td>([\d]*?)<\/td>[\S\s]*?<td>([\S\s]*?)<\/td>[\S\s]*?<td>([\S\s]*?)<\/td>[\S\s]*?<td>([\S\s]*?)<\/td>[\S\s]*?<td>([\S\s]*?)<\/td>[\S\s]*?<td>([\S\s]*?)<\/td>[\S\s]*?<\/tr>")
