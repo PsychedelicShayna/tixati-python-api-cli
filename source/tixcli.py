@@ -164,14 +164,12 @@ Notes
     The config.json file should follow this format:
 
     {
-        "address": "127.0.0.1",
+        "address": "http://127.0.0.1",
         "port": 8888,
 
         "username": "username",
         "password": "password"
     }
-
-    Do not include http:// in the address.
 """
 
 if __name__ == "__main__":

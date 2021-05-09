@@ -17,8 +17,8 @@ class TixatiServer:
             self.TimeLeft = tuple_entry[9]
 
     def FetchTransfers(self) -> list:
-        constructed_url:str = "http://{address}:{port}/transfersscrape".format(address=self.Address, port=self.Port)
-        response = requests.get(constructed_url, auth=requests.auth.HTTPDigestAuth(self.Username, self.Password))
+        constructed_url:str = "{address}:{port}/transfersscrape".format(address=self.Address, port=self.Port)
+        response = requests.get(constructed_url, auth=requests.auth.HTTPDigestAuth(self.Username, self.Password), verify=False)
         regex_results = self.TRANSFERS_PAGE_HTML_SCRAPER.findall(response.content.decode())
 
         if isinstance(regex_results, list):
@@ -27,40 +27,40 @@ class TixatiServer:
             raise TypeError("Regex parsing results returned None. Failed to scrape using current Regex.")
 
     def AddTransfer(self, magnet_link:str) -> requests.Response:
-        constructed_url:str = "http://{address}:{port}/transfers/action".format(address=self.Address, port=self.Port)
+        constructed_url:str = "{address}:{port}/transfers/action".format(address=self.Address, port=self.Port)
 
         return requests.post(constructed_url, auth=requests.auth.HTTPDigestAuth(self.Username, self.Password), files={
             'addlinktext': magnet_link,
             'addlink': "Add"
-        })
+        }, verify=False)
 
     def RemoveTransfer(self, transfer_id:str) -> requests.Response:
-        constructed_url:str = "http://{address}:{port}/transfers/{transfer_id}/details/action".format(address=self.Address, port=self.Port, transfer_id=transfer_id)
+        constructed_url:str = "{address}:{port}/transfers/{transfer_id}/details/action".format(address=self.Address, port=self.Port, transfer_id=transfer_id)
 
         return requests.post(constructed_url, auth=requests.auth.HTTPDigestAuth(self.Username, self.Password), data={
             transfer_id:"1",
             "removeconf":"Remove Transfers"
-        })
+        }, verify=False)
 
     def DeleteTransfer(self, transfer_id:str) -> requests.Response:
-        constructed_url:str = "http://{address}:{port}/transfers/action".format(address=self.Address, port=self.Port)
+        constructed_url:str = "{address}:{port}/transfers/action".format(address=self.Address, port=self.Port)
 
         return requests.post(constructed_url, auth=requests.auth.HTTPDigestAuth(self.Username, self.Password), data={
             transfer_id: "1",
             "deleteconf": "Delete Transfers And Downloaded Files"
-        })
+        }, verify=False)
 
     def StartTransfer(self, transfer_id:str) -> requests.Response:
-        constructed_url:str = "http://{address}:{port}/transfers/{transfer_id}/details/action".format(address=self.Address, port=self.Port, transfer_id=transfer_id)
-        return requests.post(constructed_url, auth=requests.auth.HTTPDigestAuth(self.Username, self.Password), data={"start": "Start"})
+        constructed_url:str = "{address}:{port}/transfers/{transfer_id}/details/action".format(address=self.Address, port=self.Port, transfer_id=transfer_id)
+        return requests.post(constructed_url, auth=requests.auth.HTTPDigestAuth(self.Username, self.Password), data={"start": "Start"}, verify=False)
 
     def StopTransfer(self, transfer_id:str) -> requests.Response:
-        constructed_url:str = "http://{address}:{port}/transfers/{transfer_id}/details/action".format(address=self.Address, port=self.Port, transfer_id=transfer_id)
-        return requests.post(constructed_url, auth=requests.auth.HTTPDigestAuth(self.Username, self.Password), data={"stop": "Stop"})
+        constructed_url:str = "{address}:{port}/transfers/{transfer_id}/details/action".format(address=self.Address, port=self.Port, transfer_id=transfer_id)
+        return requests.post(constructed_url, auth=requests.auth.HTTPDigestAuth(self.Username, self.Password), data={"stop": "Stop"}, verify=False)
 
     def CheckFiles(self, transfer_id:str) -> requests.Response:
-        constructed_url:str = "http://{address}:{port}/transfers/{transfer_id}/details/action".format(address=self.Address, port=self.Port, transfer_id=transfer_id)
-        return requests.post(constructed_url, auth=requests.auth.HTTPDigestAuth(self.Username, self.Password), data={"checkfiles": "Check Files"})
+        constructed_url:str = "{address}:{port}/transfers/{transfer_id}/details/action".format(address=self.Address, port=self.Port, transfer_id=transfer_id)
+        return requests.post(constructed_url, auth=requests.auth.HTTPDigestAuth(self.Username, self.Password), data={"checkfiles": "Check Files"}, verify=False)
 
     def __init__(self, config):
         # Config points to a config.json file, and must be parsed into a dict before moving on.
