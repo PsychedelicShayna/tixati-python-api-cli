@@ -72,6 +72,7 @@ Transfer Operations
     --stop  (-sp) <id;id;id..>                | Stops one or more transfers with the given IDs.
     --delete (-d) <id;id;id..>                | Removes and deletes the files of one or more transfers with the given IDs.
     --remove (-r) <id;id;id..>                | Removes one or more transfers with the given IDs.
+    --check  (-c) <id;id;id..>                | Checks the presence of the transfer's files, re-initiates the transfer if missing.
 
 Example Usage
     tixcli -l seeding:name=Toradora
