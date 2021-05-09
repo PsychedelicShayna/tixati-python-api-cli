@@ -29,6 +29,7 @@ server.RemoveTransfer(first_transfer.Id)
 server.DeleteTransfer(first_transfer.Id)
 server.StartTransfer(first_transfer.Id)
 server.StopTransfer(first_transfer.Id)
+server.CheckFiles(first_transfer.Id)
 ```
 ```python
 # Definition of TixatiServer.Transfer and all available properties.
