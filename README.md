@@ -1,12 +1,53 @@
 # Tixati Python API and Command Line Interface
 This project consists of two parts: `tixati_api.py` which is a general purpose API class for interfacing with Tixati's webserver through Python, and `tixcli.py` which is a command line interface that implements `tixati_api.py` to be able to manage torrents/transfers remotely from the command line. You will need to have Tixati's webserver up and running to be able to use this.
 
-Since this script is using RegEx to scrape the transfer list, it's not going to be compatible with every HTML template / theme you have set up for your web interface. This is tested and works with [Alduin94's tixati-dark-theme](https://github.com/Alduin94/tixati-dark-theme) - but does not work with the default theme. I'm going to try to find a more elegant way of fetching the transfer list in the future, but for now if you wish to use this script as is, then you'll have to use Alduin's theme or modify the RegeEx to accomodate the theme that you're using. Any help would be much appreciated.
-
+#### Important For It To Work
+I have no better way of fetching the transfer list than using RegEx to scrape the HTML at the moment, so in order for it to work on your instance, you must add `source/transfersscrape.html` to your Tixati webui folder, as the RegEx can only scrape that HTML file. It serves the same purpose as the regular `transfers.html` file in your webui folder, but for the sake of maintaining your theme and not interfering with the rest of your instance, a RegEx scrapable version of the transfers page has to be added to your instance. Credit goes to [Alduin94's tixati-dark-theme](https://github.com/Alduin94/tixati-dark-theme) for making the file. Everything else however can be done via post requests and does not need RegEx to function. 
 
 You must create a `config.json` file within the same directory as `tixcli.py` in order not to be prompted for a server/port/username/password every time you run the command. See the notes section of the help text for more information as to the format.
 
-## Help Text
+### API Example & Currently Available Functions
+
+```python
+from tixati_api import TixatiServer
+
+# Alternatively: server = TixatiServer(config = "./config.json")
+server = TixatiServer(config = {
+   "address": "127.0.0.1",
+   "port": 8890,
+   "username": "username",
+   "password": "password"
+})
+
+server.AddTransfer("a_magnet_link_here") 
+
+# Gets every transfer on the server in the form of a list of TixatiServer.Transfer class instances.
+all_transfers = server.FetchTransfers()
+first_transfer = all_transfers[0]
+
+server.RemoveTransfer(first_transfer.Id)
+server.DeleteTransfer(first_transfer.Id)
+server.StartTransfer(first_transfer.Id)
+server.StopTransfer(first_transfer.Id)
+```
+```python
+# Definition of TixatiServer.Transfer and all available properties.
+class Transfer:
+   def __init__(self, tuple_entry):
+      self.StatusClass     = tuple_entry[0]
+      self.Id              = tuple_entry[1]
+      self.Title           = tuple_entry[2]
+      self.SizeLeft        = tuple_entry[3]
+      self.Percent         = tuple_entry[4]
+      self.Status          = tuple_entry[5]
+      self.BytesIn         = tuple_entry[6]
+      self.BytesOut        = tuple_entry[7]
+      self.Priority        = tuple_entry[8]
+      self.TimeLeft        = tuple_entry[9]
+```
+
+
+### CLI Help Text
 ```
 General Operations
    --help (-h)                                  | This help text.
@@ -65,7 +106,7 @@ Notes
     Do not include http:// in the address.
 ```
 
-## Example Output
+## CLI Example Output
 _The output is color coded depending on the transfer state, but is obviously not visible through GitHub._
 
 `tixcli --list downloading:name=Nagatoro`
