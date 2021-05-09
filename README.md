@@ -6,8 +6,10 @@ I have no better way of fetching the transfer list than using RegEx to scrape th
 
 You must create a `config.json` file within the same directory as `tixcli.py` in order not to be prompted for a server/port/username/password every time you run the command. See the notes section of the help text for more information as to the format.
 
-### API Example & Currently Available Functions
+### Command Line Interface Demo
+![](demo/cli-demo.gif?raw=true)
 
+### API Example & Currently Available Functions
 ```python
 from tixati_api import TixatiServer
 
