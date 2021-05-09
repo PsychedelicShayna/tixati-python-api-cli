@@ -5,6 +5,7 @@
 !LICENSE
 
 !source/
+!demo/
 
 *.pyc
 *.json
