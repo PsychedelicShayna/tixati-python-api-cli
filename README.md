@@ -2,7 +2,7 @@
 This project consists of two parts: `tixati_api.py` which is a general purpose API class for interfacing with Tixati's webserver through Python, and `tixcli.py` which is a command line interface that implements `tixati_api.py` to be able to manage torrents/transfers remotely from the command line. The API uses Tixati's built in web interface which you can enable in Tixati's options panel if you haven't already, without it set up, neither the API or CLI will work.
 
 #### Important For It To Work
-I have no better way of fetching the transfer list than using RegEx to scrape the HTML at the moment, so in order for it to work on your instance, you must add `source/transfersscrape.html` to your Tixati webui folder, as the RegEx can only scrape that HTML file. It serves the same purpose as the regular `transfers.html` file in your webui folder, but for the sake of maintaining your theme and not interfering with the rest of your instance, a RegEx scrapable version of the transfers page has to be added to your instance. Credit goes to [Alduin94's tixati-dark-theme](https://github.com/Alduin94/tixati-dark-theme) for making the file. Everything else however can be done via post requests and does not need RegEx to function. 
+I have no better way of fetching the transfer list than using RegEx to scrape the HTML at the moment, so in order for it to work on your instance, you must add `source/transfersscrape.html` to your Tixati webui folder, as the RegEx can only scrape that HTML file. It serves the same purpose as the regular `transfers.html` file in your webui folder, but for the sake of maintaining your theme and not interfering with the rest of your instance, a RegEx scrapable version of the transfers page has to be added to your instance. Credit goes to [Alduin94's tixati-dark-theme](https://github.com/Alduin94/tixati-dark-theme) for making the file. Everything else however can be done via post requests and does not need RegEx to function.
 
 You must create a `config.json` file within the same directory as `tixcli.py` in order not to be prompted for a server/port/username/password every time you run the command. See the notes section of the help text for more information as to the format.
 
@@ -23,17 +23,17 @@ server = TixatiServer(config = {
    "password": "password"
 })
 
-server.AddTransfer("a_magnet_link_here") 
+server.add_transfer("a_magnet_link_here")
 
 # Gets every transfer on the server in the form of a list of TixatiServer.Transfer class instances.
-all_transfers = server.FetchTransfers()
+all_transfers = server.fetch_transfers()
 first_transfer = all_transfers[0]
 
-server.RemoveTransfer(first_transfer.Id)
-server.DeleteTransfer(first_transfer.Id)
-server.StartTransfer(first_transfer.Id)
-server.StopTransfer(first_transfer.Id)
-server.CheckFiles(first_transfer.Id)
+server.remove_transfer(first_transfer.Id)
+server.delete_transfer(first_transfer.Id)
+server.start_transfer(first_transfer.Id)
+server.stop_transfer(first_transfer.Id)
+server.check_files(first_transfer.Id)
 ```
 ```python
 # Definition of TixatiServer.Transfer and all available properties.
@@ -97,7 +97,7 @@ Notes
     The script searched for a config file named config.json within the same directory,
     where the server address, port, username, and password will be stored. If the file
     is not present, you will be prompted to enter it manually using the following syntax
-        >> <username>:<password>@<ip>:<port>
+        >> <username>,<password>,<ip>,<port>
 
     The config.json file should follow this format:
 

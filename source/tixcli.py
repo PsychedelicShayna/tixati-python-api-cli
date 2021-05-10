@@ -1,8 +1,9 @@
-from ctypes import windll, Structure, c_short, c_ushort, byref
 from tixati_api import TixatiServer
-import sys, os
+import platform, sys, os
 
-if windll:
+if platform.system() == "Windows":
+    from ctypes import windll, Structure, c_short, c_ushort, byref
+
     class _COORD(Structure):
         _fields_ = [("X", c_short),
                     ("Y", c_short)]
@@ -20,18 +21,20 @@ if windll:
                     ("srWindow", _SMALL_RECT),
                     ("dwMaximumWindowSize", _COORD)]
 
-    STD_INPUT_HANDLE = -10
-    STD_OUTPUT_HANDLE= -11
-    STD_ERROR_HANDLE = -12
+    STD_INPUT_HANDLE        = -10
+    STD_OUTPUT_HANDLE       = -11
+    STD_ERROR_HANDLE        = -12
 
-    FOREGROUND_BLUE = 0x01 # text color contains blue.
-    FOREGROUND_GREEN= 0x02 # text color contains green.
-    FOREGROUND_RED  = 0x04 # text color contains red.
-    FOREGROUND_INTENSITY = 0x08 # text color is intensified.
-    BACKGROUND_BLUE = 0x10 # background color contains blue.
-    BACKGROUND_GREEN= 0x20 # background color contains green.
-    BACKGROUND_RED  = 0x40 # background color contains red.
-    BACKGROUND_INTENSITY = 0x80 # background color is intensified.
+    FOREGROUND_RED          = 0x04 # text color contains red.
+    FOREGROUND_GREEN        = 0x02 # text color contains green.
+    FOREGROUND_BLUE         = 0x01 # text color contains blue.
+
+    BACKGROUND_RED          = 0x40 # background color contains red.
+    BACKGROUND_GREEN        = 0x20 # background color contains green.
+    BACKGROUND_BLUE         = 0x10 # background color contains blue.
+
+    FOREGROUND_INTENSITY    = 0x08 # text color is intensified.
+    BACKGROUND_INTENSITY    = 0x80 # background color is intensified.
 
     std_out_handle = windll.kernel32.GetStdHandle(STD_OUTPUT_HANDLE)
 
@@ -41,25 +44,26 @@ if windll:
     def GetConsoleColor(handle=std_out_handle):
         csbi = _CONSOLE_SCREEN_BUFFER_INFO()
         result = windll.kernel32.GetConsoleScreenBufferInfo(handle, byref(csbi))
+
         if not result:
             return FOREGROUND_RED | FOREGROUND_INTENSITY
         else:
             return csbi.wAttributes
 else:
-    def SetConsoleColor(color):
+    def SetConsoleColor(_):
         # Cross-platform Implementation Todo
         pass
 
     def GetConsoleColor():
         # Cross-platform Implementation Todo
-        pass
+        return None
 
 DEFAULT_CONFIG_PATH:str = "{0}/config.json".format(os.path.dirname(__file__))
 
 def RenderTransferList(server_instance:TixatiServer, list_filters:str) -> str:
     rendered_lines:list = []
 
-    transfers = server_instance.FetchTransfers()
+    transfers = server_instance.fetch_transfers()
 
     name_filter = None
     status_filters = []
@@ -111,7 +115,7 @@ def RenderTransferList(server_instance:TixatiServer, list_filters:str) -> str:
             progress_line = (("=" * (int(transfer.Percent)-2) ) + ">>") + ("_" * (100 - int(transfer.Percent)))
 
             print("|" + progress_line)
-            print("|    " + transfer.Title + "\n\n")
+            print("| " + transfer.Title + "\n\n")
 
             SetConsoleColor(original_color)
 
@@ -179,16 +183,28 @@ if __name__ == "__main__":
         config = DEFAULT_CONFIG_PATH
     else:
         print("Config file not found, please supply the server configuration manually.")
-        config_str:str = input("(<username>:<password>@<ip>:<port>) >> ")
+        # username,password,http://ip,port
+        config_str:str = input("(<username,password,address,port) >> ").split(",")
+
+        if len(config_str) != 4:
+            print("Config length mismatch. Expected 4 values, unpacked {0}".format(len(config_str)))
 
         try:
-            config = {
-                "username": config_str.split("@")[0].split(":")[0],
-                "password": config_str.split("@")[0].split(":")[1],
+            # config = {
+            #     "username": config_str.split("@")[0].split(":")[0],
+            #     "password": config_str.split("@")[0].split(":")[1],
 
-                "address": config_str.split("@")[1].split(":")[0],
-                "port": int(config_str.split("@")[1].split(":")[1])
+            #     "address": config_str.split("@")[1].split(":")[0],
+            #     "port": int(config_str.split("@")[1].split(":")[1])
+            # }
+
+            config = {
+                "username": config_str[0],
+                "password": config_str[1],
+                "address": config_str[2],
+                "port": int(config_str[3])
             }
+
         except IndexError as exception:
             print("\nIndexError exception, invalid configuration format.")
             print("Format should be: <username>:<password>@<ip>:<port>\n\nException %s" % ("-" * 30))
@@ -247,12 +263,12 @@ if __name__ == "__main__":
             operation_func_map:dict = {
                 "list":   lambda list_filter: RenderTransferList(server, list_filter),
 
-                "add":    server.AddTransfer,
-                "remove": server.RemoveTransfer,
-                "delete": server.DeleteTransfer,
-                "stop":   server.StopTransfer,
-                "start":  server.StartTransfer,
-                "check":  server.CheckFiles
+                "add":    server.add_transfer,
+                "remove": server.remove_transfer,
+                "delete": server.delete_transfer,
+                "stop":   server.stop_transfer,
+                "start":  server.start_transfer,
+                "check":  server.check_files
             }
 
             if operation[0] in operation_func_map:
