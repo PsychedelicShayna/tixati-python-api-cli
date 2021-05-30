@@ -6,7 +6,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class TixatiServer:
     # The hefty piece of RegEx used to scrape the transfers page.
-    TRANSFERS_PAGE_HTML_SCRAPER = re.compile("[\S\s]*?<tr class=\"(downloading|complete|seeding|offline|queued)_(?:odd|even)\">[\S\s]*?<td><a href=\"\/transfers\/([a-z0-9]+)\/details\">([\S\s]*?)<\/a><\/td>[\S\s]*?<td>([\S\s]*?)<\/td>[\S\s]*?<td>([\d]*?)<\/td>[\S\s]*?<td>([\S\s]*?)<\/td>[\S\s]*?<td>([\S\s]*?)<\/td>[\S\s]*?<td>([\S\s]*?)<\/td>[\S\s]*?<td>([\S\s]*?)<\/td>[\S\s]*?<td>([\S\s]*?)<\/td>[\S\s]*?<\/tr>")
+    TRANSFERS_PAGE_HTML_SCRAPER = re.compile("[\S\s]*?<tr class=\"(downloading|complete|seeding|offline|queued|standbyseed)_(?:odd|even)\">[\S\s]*?<td><a href=\"\/transfers\/([a-z0-9]+)\/details\">([\S\s]*?)<\/a><\/td>[\S\s]*?<td>([\S\s]*?)<\/td>[\S\s]*?<td>([\d]*?)<\/td>[\S\s]*?<td>([\S\s]*?)<\/td>[\S\s]*?<td>([\S\s]*?)<\/td>[\S\s]*?<td>([\S\s]*?)<\/td>[\S\s]*?<td>([\S\s]*?)<\/td>[\S\s]*?<td>([\S\s]*?)<\/td>[\S\s]*?<\/tr>")
 
     class Transfer:
         def __init__(self, values:tuple):

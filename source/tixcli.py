@@ -79,7 +79,7 @@ def RenderTransferList(server_instance:TixatiServer, list_filters:str) -> str:
                 if len(split_lfilter) == 2 and split_lfilter[0] == "name":
                     name_filter = split_lfilter[1]
 
-            elif lfilter in ('complete', 'seeding', 'downloading', 'offline', 'queued'):
+            elif lfilter in ('complete', 'seeding', 'downloading', 'offline', 'queued', 'standbyseed'):
                 status_filters.append(lfilter)
 
             elif lfilter == "id":
@@ -104,6 +104,8 @@ def RenderTransferList(server_instance:TixatiServer, list_filters:str) -> str:
             elif transfer.StatusClass.lower() == "offline":
                 SetConsoleColor(FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY)
             elif transfer.StatusClass.lower() == "queued":
+                SetConsoleColor(FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY)
+            elif transfer.StatusClass.lower() == "standbyseed":
                 SetConsoleColor(FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY)
             else:
                 SetConsoleColor(FOREGROUND_GREEN | FOREGROUND_INTENSITY)
