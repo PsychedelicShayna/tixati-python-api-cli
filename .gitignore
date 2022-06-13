@@ -1,12 +1,5 @@
-/*
-
-!.gitignore
-!README.md
-!LICENSE
-
-!source/
-!demo/
-
 *.pyc
 *.json
-*_*.py
+*/_*.py
+*theme*
+
